@@ -1,0 +1,52 @@
+#!/bin/sh
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+uid=`id | cut -d\( -f1 | cut -d= -f2`
+
+case "$1" in
+  start)
+	[ -x /usr/sbin/fdrd ] || exit 5
+
+	# Only root can start the service
+	[ $uid -ne 0 ] && exit 4
+
+	# check to see if tracefs is mounted and where
+	tpath=`grep tracefs /etc/mtab | awk '{ print $2 }'`
+	[ -z "$tpath" ] && mount -t tracefs nodev /sys/kernel/tracing
+	tpath=`grep tracefs /etc/mtab | awk '{ print $2 }'`
+	[ -z "$tpath" ] && exit 5
+
+	action $"Starting fdr services "
+	daemon fdrd -d $tpath 2> /var/log/fdr.log
+	RETVAL=$?
+	echo
+	;;
+  stop)
+	# Only root can stop the service
+	[ $uid -ne 0 ] && exit 4
+
+	# Stop daemons.
+	echo -n $"Shutting down fdr daemon: "
+	killproc fdrd -15
+	RETVAL=$?
+	echo
+	;;
+  status)
+	status fdrd
+	RETVAL=$?
+	;;
+  restart )
+	$0 stop
+	$0 start
+	RETVAL=$?
+	echo
+	;;
+  *)
+	echo $"Usage: fdr {start|stop|status|restart}"
+	RETVAL=2
+	;;
+esac
+
+exit $RETVAL
