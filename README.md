@@ -105,3 +105,28 @@ SEE ALSO
 
 	https://www.kernel.org/doc/Documentation/trace/ftrace.txt
 
+
+BUILDING & INSTALLING
+
+	A Makefile is provided with this repository to facilitate building
+	and installing fdr.  Simply type `make` to build fdr and type
+	`make install` to install it
+
+	The Makefile depends on the C compiler (provided by the gcc rpm),
+	the `install` tool (provided by the coreutils rpm) as well as
+	make inself (provided by make rpm).
+
+	The source code itself depends on standard header files such
+	as <stdio.h> (provided by glibc-headers).
+
+LICENSE
+
+	This repository is licensed under the "Universal Permissive
+	License" (UPL).  See the file LICENSE in this repository for
+	more information.
+
+CONTRIBUTIONS
+
+	Contributions to this respository will require an Oracle Contribributor
+	Agreement, see CONTRIBUTING.md for more information.
+
