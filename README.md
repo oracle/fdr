@@ -1,11 +1,6 @@
+# Flight Data Recorder
 
-fdrd(8)
-
-NAME
-
-	fdrd - Flight Data Recorder daemon
-
-DESCRIPTION
+## Description
 
 	The flight data recorder (fdr) is a daemon which enables ftrace probes,
 	harvests ftrace data and (optionally) writes the data to a file.
@@ -20,11 +15,11 @@ DESCRIPTION
 	available.  Error messages from fdr can be viewed via systemctl,
 	for example, systemctl status -l fdr.
 
-CONFIGURATION FILE SYNTAX
+## Configuration File Syntax
 
 	The following keywords and options are recognized
 
-	instance iname [buffer-size]
+###	instance iname [buffer-size]
 
 		Create a new ftrace instance called "iname".  This instance
 		will appear in /sys/kernel/debug/tracing/instances.
@@ -34,13 +29,13 @@ CONFIGURATION FILE SYNTAX
 		kernel.  A suffix of 'k', 'K', 'm', 'M', 'g' or 'G' may be
 		used to specify kilobytes, megabytes or gigabytes.
 
-	modprobe module-name
+###	modprobe module-name
 
 		Force the named module to be loaded by fdr.  This can be
 		useful when the module is normally loaded on demand and
 		the probes cannot be enabled until the module is loaded.
 
-	enable subsystem-name/probe-name [filter]
+###	enable subsystem-name/probe-name [filter]
 
 		Enable an ftrace probe in the specified subsystem.  Both
 		the subsystem name and probe name are defined by the kernel.
@@ -51,21 +46,21 @@ CONFIGURATION FILE SYNTAX
 		defined by ftrace itself and the parameters are defined
 		by the static tracepoint being enabled in the kernel.
 
-	enable subsystem-name/all
+###	enable subsystem-name/all
 
 		Enable all ftrace probes for the subsystem.
 
-	disable	subsystem-name/probe-name
+###	disable	subsystem-name/probe-name
 
 		Disable an ftrace probe in the specified subsystem.  This
 		can be useful to disable selective probes when the "ALL"
 		keyword has been used.
 
-	disable	subsystem-name/all
+###	disable	subsystem-name/all
 
 		Disable all probes in the specified subsystem.
 
-	saveto file-name [maxsize]
+###	saveto file-name [maxsize]
 
 		Save the output of enabled probes to the named file.  If
 		the optional maxsize parameter is given, the daemon will
@@ -82,7 +77,7 @@ CONFIGURATION FILE SYNTAX
 		The ftrace buffers in the kernel are circular. If no
 		process harvests the data, new data will overwrite old data.
 
-	minfree value
+###	minfree value
 
 		Limit the output by the daemon based on free space in the
 		file system for the save file.  If free space percentage is
@@ -91,7 +86,7 @@ CONFIGURATION FILE SYNTAX
 		If no minfree directive is present, fdr will use 5% by
 		default.
 
-LOG ROTATION
+## Log Rotation
 
 	fdr can use logrotate(8) to manage the output files.  By convention,
 	/etc/logrotate.d/instance-name controls the behavior of logrotate.
@@ -99,14 +94,13 @@ LOG ROTATION
 	fdr will also invoke logrotate directly at startup and when reaching
 	the maxsize limit for the save file.
 
-SEE ALSO
+## See Also
 
-	trace-cmd(1)
+	[trace-cmd](https://lwn.net/Articles/410200/)
 
-	https://www.kernel.org/doc/Documentation/trace/ftrace.txt
+	[ftrace documentation](https://www.kernel.org/doc/Documentation/trace/ftrace.txt)
 
-
-BUILDING & INSTALLING
+## Building & Installing
 
 	A Makefile is provided with this repository to facilitate building
 	and installing fdr.  Simply type `make` to build fdr and type
@@ -119,14 +113,14 @@ BUILDING & INSTALLING
 	The source code itself depends on standard header files such
 	as <stdio.h> (provided by glibc-headers).
 
-LICENSE
+## License
 
 	This repository is licensed under the "Universal Permissive
-	License" (UPL).  See the file LICENSE in this repository for
+	License" (UPL).  See [LICENSE](/LICENSE.txt) in this repository for
 	more information.
 
-CONTRIBUTIONS
+## Contributing
 
-	Contributions to this respository will require an Oracle Contribributor
-	Agreement, see CONTRIBUTING.md for more information.
+	Contributions to this respository will require an Oracle Contributor
+	Agreement, see [CONTRIBUTING](/CONTRIBUTING.md) for more information.
 
