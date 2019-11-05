@@ -19,7 +19,7 @@
 
 	The following keywords and options are recognized
 
-###	instance iname [buffer-size]
+###	instance iname
 
 		Create a new ftrace instance called "iname".  This instance
 		will appear in /sys/kernel/debug/tracing/instances.
@@ -35,7 +35,7 @@
 		useful when the module is normally loaded on demand and
 		the probes cannot be enabled until the module is loaded.
 
-###	enable subsystem-name/probe-name [filter]
+###	enable subsystem-name/probe-name 
 
 		Enable an ftrace probe in the specified subsystem.  Both
 		the subsystem name and probe name are defined by the kernel.
@@ -60,7 +60,7 @@
 
 		Disable all probes in the specified subsystem.
 
-###	saveto file-name [maxsize]
+###	saveto file-name 
 
 		Save the output of enabled probes to the named file.  If
 		the optional maxsize parameter is given, the daemon will
@@ -116,7 +116,7 @@
 ## License
 
 	This repository is licensed under the "Universal Permissive
-	License" (UPL).  See [LICENSE](/LICENSE.txt) in this repository for
+	License" (UPL).  See [LICENSE](/LICENSE) in this repository for
 	more information.
 
 ## Contributing
