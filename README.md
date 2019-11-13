@@ -6,23 +6,23 @@ The flight data recorder (fdr) is a daemon which enables ftrace probes,
 harvests ftrace data and (optionally) writes the data to a file.
 
 The behavior of fdr is defined by configuration files stored in
-/etc/fdr.d.  During service startup, fdr will process each file in
+```/etc/fdr.d```.  During service startup, fdr will process each file in
 the directory which has the suffix of .conf.  If new config files
 are added to the fdr.d directory, then the service must be restarted
 to recognize the new configuration information.
 
-fdr is controlled by systemd(8) on systems where systemd is
+fdr is controlled by ```systemd(8)``` on systems where systemd is
 available.  Error messages from fdr can be viewed via systemctl,
-for example, systemctl status -l fdr.
+for example, ```systemctl status -l fdr```.
 
 ## Configuration File Syntax
 
 The following keywords and options are recognized
 
-### instance iname
+### instance iname [buffer-size]
 
 Create a new ftrace instance called "iname".  This instance
-will appear in /sys/kernel/debug/tracing/instances.
+will appear in ```/sys/kernel/debug/tracing/instances```
 
 The optional buffer-size parameter can be used to control
 the size of the ftrace buffers for this instance in the
@@ -35,7 +35,7 @@ Force the named module to be loaded by fdr.  This can be
 useful when the module is normally loaded on demand and
 the probes cannot be enabled until the module is loaded.
 
-### enable subsystem-name/probe-name 
+### enable subsystem-name/probe-name [filter]
 
 Enable an ftrace probe in the specified subsystem.  Both
 the subsystem name and probe name are defined by the kernel.
@@ -60,11 +60,12 @@ keyword has been used.
 
 Disable all probes in the specified subsystem.
 
-### saveto file-name 
+### saveto file-name [maxsize]
 
 Save the output of enabled probes to the named file.  If
 the optional maxsize parameter is given, the daemon will
-initiate a log rotation, see "LOG ROTATION" below.  A suffix
+initiate a log rotation, see [Log Rotation](README.md#log-rotation) below.
+A suffix
 of 'k', 'K', 'm', 'M', 'g' or 'G' may be used to specify
 kilobytes, megabytes or gigabytes.
 
@@ -72,7 +73,9 @@ If no saveto directive is present, then fdr will create the
 instance and enable the probes.  In this case, the data
 can be harvested manually by reading:
 
+```
 /sys/kernel/debug/tracing/instances/iname/trace_pipe
+```
 
 The ftrace buffers in the kernel are circular. If no
 process harvests the data, new data will overwrite old data.
@@ -88,8 +91,8 @@ default.
 
 ## Log Rotation
 
-fdr can use logrotate(8) to manage the output files.  By convention,
-/etc/logrotate.d/instance-name controls the behavior of logrotate.
+fdr can use ```logrotate(8)``` to manage the output files.  By convention,
+``` /etc/logrotate.d/instance-name ``` controls the behavior of logrotate.
 
 fdr will also invoke logrotate directly at startup and when reaching
 the maxsize limit for the save file.
@@ -111,7 +114,7 @@ the `install` tool (provided by the coreutils rpm) as well as
 make inself (provided by make rpm).
 
 The source code itself depends on standard header files such
-as <stdio.h> (provided by glibc-headers).
+as ```<stdio.h>``` (provided by glibc-headers).
 
 ## License
 
