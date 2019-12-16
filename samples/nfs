@@ -1,0 +1,57 @@
+# Licensed under the Universal Permissive License v 1.0 as shown at
+# https://oss.oracle.com/licenses/upl
+#
+# This is a sample config file for flight data recorder to enable
+# probes in the nfs client.  To use this, copy the file to 
+# /etc/fdr.d/nfs.conf and start fdr with systemctl start fdr
+#
+instance nfs
+# modprobe nfs4 will drag in sunrpc & nfs as deps
+modprobe nfsv4
+#
+# enable nfs4/nfs4_cb_recall
+enable nfs4/nfs4_create_session
+enable nfs4/nfs4_destroy_clientid
+enable nfs4/nfs4_destroy_session
+enable nfs4/nfs4_exchange_id
+enable nfs4/nfs4_get_fs_locations
+enable nfs4/nfs4_open_expired
+enable nfs4/nfs4_open_reclaim
+enable nfs4/nfs4_reclaim_complete
+enable nfs4/nfs4_reclaim_delegation
+enable nfs4/nfs4_renew
+enable nfs4/nfs4_secinfo
+enable nfs4/nfs4_setclientid
+enable nfs4/nfs4_setclientid_confirm
+enable nfs4/nfs4_test_delegation_stateid
+enable nfs4/nfs4_test_lock_stateid
+enable nfs4/nfs4_test_open_stateid
+# the nfs4_xdr_status only exists in more recent kernels, v5.x
+#enable nfs4/nfs4_xdr_status    (error != 0)
+enable nfs4/nfs4_xdr_status    (error != 0 && (!(error == 2 && op == 15)))
+#
+enable sunrpc/rpc__auth_tooweak
+enable sunrpc/rpc_bad_callhdr
+enable sunrpc/rpc__bad_creds
+enable sunrpc/rpc_bad_verifier
+enable sunrpc/rpc_bind_status
+enable sunrpc/rpc_connect_status
+enable sunrpc/rpc__garbage_args
+enable sunrpc/rpc__mismatch
+enable sunrpc/rpc__proc_unavail
+enable sunrpc/rpc__prog_mismatch
+enable sunrpc/rpc__prog_unavail
+enable sunrpc/rpc_socket_close
+enable sunrpc/rpc_socket_connect
+enable sunrpc/rpc_socket_error
+enable sunrpc/rpc_socket_reset_connection
+enable sunrpc/rpc_socket_shutdown
+enable sunrpc/rpc_socket_state_change
+enable sunrpc/rpc__stale_creds
+enable sunrpc/rpc__unparsable
+enable sunrpc/rpc_xdr_alignment
+enable sunrpc/rpc_xdr_overflow
+enable sunrpc/xprt_ping
+enable sunrpc/xprt_timer
+#
+saveto /var/log/nfs.log 128k

@@ -6,7 +6,7 @@
 Description=Flight Data Recorder
 
 [Service]
-Type=simple
+Type=forking
 RemainAfterExit=yes
 ExecStart=/usr/sbin/fdrd
 

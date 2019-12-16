@@ -13,3 +13,13 @@ install:	fdrd
 uninstall:
 	rm -rf /etc/fdr.d /usr/sbin/fdrd
 
+RPMBUILD_DIR ?= $(HOME)
+
+tarball:
+	tar --transform "s/^./fdr-1/" \
+		-czf $(RPMBUILD_DIR)/rpmbuild/SOURCES/fdr-1.tar.gz .
+
+rpm:
+	cp rpmbuild/1.1/fdr.spec $(RPMBUILD_DIR)/rpmbuild/SPECS/fdr.spec
+	rpmbuild -bb $(RPMBUILD_DIR)/rpmbuild/SPECS/fdr.spec 
+
