@@ -20,6 +20,6 @@ tarball:
 		-czf $(RPMBUILD_DIR)/rpmbuild/SOURCES/fdr-1.tar.gz .
 
 rpm:
-	cp rpmbuild/1.1/fdr.spec $(RPMBUILD_DIR)/rpmbuild/SPECS/fdr.spec
+	cp buildrpm/1.1/fdr.spec $(RPMBUILD_DIR)/rpmbuild/SPECS/fdr.spec
 	rpmbuild -bb $(RPMBUILD_DIR)/rpmbuild/SPECS/fdr.spec 
 
