@@ -1,0 +1,11 @@
+/var/log/nfs.log {
+	missingok
+	create
+	daily
+	rotate 4
+	maxsize 128k
+	nodateext
+	postrotate
+		pkill -x -HUP fdrd
+	endscript
+}
