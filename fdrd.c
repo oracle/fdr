@@ -449,6 +449,7 @@ saveto(struct instance *insp, struct item *itp)
 	fprintf(stderr, "saving from %s to %s\n", fname, itp->target);
 
 	sa.sa_sigaction = sighup;
+	sa.sa_flags = 0;
 	if (sigaction(SIGHUP, &sa, NULL))
 		perror("sigaction SIGHUP, continuing");
 
@@ -725,6 +726,7 @@ make_one_instance(struct instance *insp)
 		return;	/* parent just returns */
 
 	sa.sa_handler = SIG_DFL;
+	sa.sa_flags = 0;
 	if (sigaction(SIGTERM, &sa, NULL) ||
 	    sigaction(SIGINT, &sa, NULL))
 		perror("sigaction");
@@ -786,6 +788,7 @@ main(int argc, char **argv)
 		strncpy(inst_dir, INST_DIR, sizeof(inst_dir));
 
 	sa.sa_sigaction = sighandler;
+	sa.sa_flags = 0;
 	if (sigaction(SIGTERM, &sa, NULL) ||
 	    sigaction(SIGINT, &sa, NULL))
 		perror("sigaction");	/* continue anyway */
@@ -796,6 +799,7 @@ main(int argc, char **argv)
 	 * with it.
 	 */
 	sa.sa_handler = SIG_IGN;
+	sa.sa_flags = 0;
 	if (sigaction(SIGHUP, &sa, NULL))
 		perror("sigaction SIGHUP");	/* continue anyway */
 
