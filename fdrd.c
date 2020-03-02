@@ -416,21 +416,32 @@ rotate(struct instance *insp)
 					fprintf(stderr, "logrotate failed %d\n",
 					    status);
 				}
-
 			}
 		}
 	}
+}
+
+/*
+* If the number of probes is too high for the workload, we don't want to
+* flood the log with messages.  Return 1 if the message should be throttled
+* and 0 if it should be emitted.
+*/
+int
+throttle(int *counter)
+{
+	return (((*counter)++ % 1000) == 0) ? 0 : 1;
 }
 
 void
 saveto(struct instance *insp, struct item *itp)
 {
 	char ren[BUFSIZE], fname[BUFSIZE], *sp, *wp;
-	int rfd, wfd, n, warn1 = 0, warn2 = 0, rsize, pctf, logoro = 0;
+	int rfd, wfd, n, rsize, pctf, logoro = 0;
 	char *buf;
 	struct stat s;
 	struct statvfs vfs;
 	struct sigaction sa;
+	int warn1 = 0, warn2 = 0, warn3 = 0;
 
 	/*
 	 * If the saveto file already exists, then rotate it. This avoids
@@ -504,9 +515,11 @@ saveto(struct instance *insp, struct item *itp)
 				wfd = openw(itp->target);
 
 			} else if (s.st_size > insp->maxsize) {
-				fprintf(stderr, "file size for %s",
-					itp->target);
-				fprintf(stderr, " exceeded, rotating\n");
+			    if (!throttle(&warn1)) {
+					fprintf(stderr, "file size for %s ",
+						itp->target);
+					fprintf(stderr, "exceeded, rotating\n");
+				}
 				close(wfd);
 				rotate(insp);
 				wfd = openw(itp->target);
@@ -519,7 +532,7 @@ saveto(struct instance *insp, struct item *itp)
 		if (fstatvfs(wfd, &vfs) == 0) {
 			pctf = (vfs.f_bavail * 100) / vfs.f_blocks;
 			if (pctf <= insp->minfree) {
-				if (warn1++ == 0)
+				if (!throttle(&warn2))
 					fprintf(stderr,
 					"free space too low for %s\n",
 					itp->target);
@@ -536,8 +549,7 @@ saveto(struct instance *insp, struct item *itp)
 
 		}
 		if (write(wfd, buf, n) != n)
-			if (warn2++ == 0) {
-				/* warn once, but keep going */
+			if (!throttle(&warn3)) {
 				perror(itp->target);
 			}
 	}
