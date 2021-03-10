@@ -53,6 +53,7 @@
 #include	<sys/fcntl.h>
 #include	<sys/stat.h>
 #include	<sys/statvfs.h>
+#include 	<sys/wait.h>
 
 /*
  * Notes about process management in this daemon:
@@ -243,7 +244,7 @@ instance(struct instance *insp, struct item *itp)
 		exit(1);
 	}
 	if (insp->bufsize) {
-		fprintf(stderr, "%s: bufsize %d\n", itp->target,
+		fprintf(stderr, "%s: bufsize %lu\n", itp->target,
 			insp->bufsize);
 		snprintf(bs, sizeof(bs), "%s/buffer_size_kb", insp->dname);
 
@@ -251,7 +252,7 @@ instance(struct instance *insp, struct item *itp)
 		if (fd < 0)
 			perror(bs);
 		else {
-			snprintf(value, sizeof(value), "%d", insp->bufsize);
+			snprintf(value, sizeof(value), "%lu", insp->bufsize);
 			sl = strlen(value);
 			if (write(fd, value, sl) == -1)
 				perror(bs);
@@ -380,7 +381,7 @@ rotate(struct instance *insp)
 {
 	struct stat s;
 	char cfile[BUFSIZE];
-	int status, n;
+	int status;
 	pid_t pid;
 	char *args[4];
 
@@ -397,7 +398,6 @@ rotate(struct instance *insp)
 	if (stat(cfile, &s) == 0) {
 		pid = fork();
 		if (pid == 0) {
-			n = 0;
 			args[0] = "logrotate";
 			args[1] = "-f";
 			args[2] = cfile;
@@ -435,7 +435,7 @@ throttle(int *counter)
 void
 saveto(struct instance *insp, struct item *itp)
 {
-	char ren[BUFSIZE], fname[BUFSIZE], *sp, *wp;
+	char fname[BUFSIZE];
 	int rfd, wfd, n, rsize, pctf, logoro = 0;
 	char *buf;
 	struct stat s;
@@ -561,11 +561,10 @@ read_config_file(const char *fpath, const struct stat *sb, int typeflag)
 {
 	FILE *f;
 	char buf[BUFSIZE], save_buf[BUFSIZE], *bp;
-	size_t nb;
 	int l;
 	struct item *itp;
 	struct instance *insp;
-	char *cp, *ep, *verbp = NULL, *targetp = NULL, *optarg = NULL;
+	char *cp, *verbp = NULL, *targetp = NULL, *optarg = NULL;
 	char *savep;
 
 	if (typeflag != FTW_F)
@@ -660,7 +659,7 @@ read_config_file(const char *fpath, const struct stat *sb, int typeflag)
 			insp->bufsize = 0;	/* take the ftrace default */
 			if (optarg) {
 				insp->bufsize = getvalue(optarg);
-				fprintf(stderr, "bufsize: %d\n", insp->bufsize);
+				fprintf(stderr, "bufsize: %lu\n", insp->bufsize);
 			}
 
 			anchor.numi++;
@@ -711,9 +710,11 @@ read_config_file(const char *fpath, const struct stat *sb, int typeflag)
 		} else {
 			/* put it on the end */
 			itp->forw = NULL;
-			insp->ilast->forw = insp->ilast = itp;
+			insp->ilast->forw = itp;
+			insp->ilast = itp;
 		}
 	}
+	return 0;
 }
 
 void
@@ -777,9 +778,11 @@ main(int argc, char **argv)
 {
 	struct sigaction sa;
 	struct instance *insp;
-	int pstat, opt;
+	int opt, ret;
 
-	daemon(1, 1);
+	ret  = daemon(1, 1);
+	if (ret)
+		return ret;
 
 	while ((opt = getopt(argc, argv, "vd:")) != -1)
 		switch (opt) {
