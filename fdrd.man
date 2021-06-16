@@ -1,0 +1,127 @@
+.\"
+.\" nfsd(8)
+.\"
+.\" Copyright (C) XXX
+.TH fdrd 8 "15 June 2021"
+.SH NAME
+fdrd \- Flight Data Recorder daemon
+.SH SYNOPSIS
+.BI "/usr/bin/fdrd"
+.SH DESCRIPTION
+The
+.B fdrd
+program is a daemon which enables ftrace probes,
+harvests ftrace data and (optionally) writes the data to a file.
+.P
+The behavior of fdr is defined by configuration files stored in
+.B /etc/fdr.d.
+During service startup, fdr will process each file in
+the directory which has the suffix of .conf.  If new config files
+are added to the fdr.d directory, then the service must be restarted
+to recognize the new configuration information.
+.P
+fdr is controlled by
+.B systemd
+(8) on systems where systemd is
+available.  Error messages from fdr can be viewed via systemctl,
+for example,
+.P
+.B
+systemctl status -l fdr
+.SH Configuration File Syntax
+
+The following keywords and options are recognized
+
+.B instance
+iname [buffer-size]
+.P
+Create a new ftrace instance called "iname".  This instance
+will appear in 
+.B /sys/kernel/debug/tracing/instances
+.P
+The optional buffer-size parameter can be used to control
+the size of the ftrace buffers for this instance in the
+kernel.  A suffix of 'k', 'K', 'm', 'M', 'g' or 'G' may be
+used to specify kilobytes, megabytes or gigabytes.
+.P
+.B modprobe
+module-name
+.P
+Force the named module to be loaded by fdr.  This can be
+useful when the module is normally loaded on demand and
+the probes cannot be enabled until the module is loaded.
+.P
+.B enable
+subsystem-name/probe-name [filter]
+.P
+Enable an ftrace probe in the specified subsystem.  Both
+the subsystem name and probe name are defined by the kernel.
+.P
+The optional filter parameter allows an ftrace filter to
+be set as well.  This will limit the amount of data being
+emitted.  The syntax of the filter language is
+defined by ftrace itself and the parameters are defined
+by the static tracepoint being enabled in the kernel.
+.P
+.B enable
+subsystem-name/all
+.P
+Enable all ftrace probes for the subsystem.
+.P
+.P
+.B disable
+subsystem-name/probe-name
+.P
+Disable an ftrace probe in the specified subsystem.  This
+can be useful to disable selective probes when the "ALL"
+keyword has been used.
+.P
+.B disable
+subsystem-name/all
+.P
+Disable all probes in the specified subsystem.
+.P
+.B saveto
+file-name [maxsize]
+.P
+Save the output of enabled probes to the named file.  If
+the optional maxsize parameter is given, the daemon will
+initiate a log rotation, see
+.B Log Rotation
+below.
+A suffix
+of 'k', 'K', 'm', 'M', 'g' or 'G' may be used to specify
+kilobytes, megabytes or gigabytes.
+.P
+If no saveto directive is present, then fdr will create the
+instance and enable the probes.  In this case, the data
+can be harvested manually by reading:
+.P
+/sys/kernel/debug/tracing/instances/iname/trace_pipe
+.P
+The ftrace buffers in the kernel are circular. If no
+process harvests the data, new data will overwrite old data.
+.P
+.B minfree
+value
+.P
+Limit the output by the daemon based on free space in the
+file system for the save file.  If free space percentage is
+below the specified value, no output will be written.
+.P
+If no minfree directive is present, fdr will use 5% by
+default.
+.SH LOG ROTATION
+.P
+fdr can use logrotate(8) to manage the output files.  By convention,
+/etc/logrotate.d/instance-name controls the behavior of logrotate.
+.P
+fdr will also invoke logrotate directly at startup and when reaching
+the maxsize limit for the save file.
+.SH SEE ALSO
+.P
+https://lwn.net/Articles/410200/
+.P
+https://www.kernel.org/doc/Documentation/trace/ftrace.txt
+.SH AUTHOR
+Bill Baker and Calum Mackay
