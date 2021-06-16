@@ -17,11 +17,19 @@ RPMBUILD_DIR ?= $(HOME)
 LATEST_VERS ?= 1.2
 
 tarball:
-	tar --transform "s/^./fdr-1/" \
-		-czf $(RPMBUILD_DIR)/rpmbuild/SOURCES/fdr-1.tar.gz .
+	git tag -f fdr-$(LATEST_VERS)
+	git archive --format=tar --prefix=fdr-$(LATEST_VERS)/ fdr-$(LATEST_VERS) \
+		|  ( cd /tmp ; tar xf - )
+	(cd /tmp ; tar cJf  $(RPMBUILD_DIR)/SOURCES/fdr-$(LATEST_VERS).tar.xz \
+		fdr-$(LATEST_VERS))
 
-rpm:
+rpm: tarball
 	cp buildrpm/$(LATEST_VERS)/fdr.spec \
 		$(RPMBUILD_DIR)/rpmbuild/SPECS/fdr.spec
 	rpmbuild -bb $(RPMBUILD_DIR)/rpmbuild/SPECS/fdr.spec 
+
+srpm: tarball
+	cp buildrpm/$(LATEST_VERS)/fdr.spec \
+		$(RPMBUILD_DIR)/rpmbuild/SPECS/fdr.spec
+	rpmbuild -bs $(RPMBUILD_DIR)/rpmbuild/SPECS/fdr.spec 
 

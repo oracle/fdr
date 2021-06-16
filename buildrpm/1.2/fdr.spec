@@ -1,10 +1,10 @@
 Name:		fdr
 URL:		https://github.com/oracle/fdr.git
-Version:	1
-Release:	2
+Version:	1.2
+Release:	0
 Summary:	Flight Data Recorder
 License:	UPL
-Source0:	%{name}-%{version}.tar.gz
+Source0:	%{name}-%{version}.tar.xz
 
 %description
 The flight data recorder, a daemon which enables ftrace probes and harvests the data
