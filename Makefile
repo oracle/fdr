@@ -1,22 +1,43 @@
 # Licensed under the Universal Permissive License v 1.0 as shown at
 # https://oss.oracle.com/licenses/upl.
 #
-all:		fdrd
+CFLAGS       := -g
 
-clean:
-	rm fdrd
-
-install:	fdrd
-	mkdir -p /etc/fdr.d
-	install -m 755 fdrd /usr/sbin
-
-uninstall:
-	rm -rf /etc/fdr.d /usr/sbin/fdrd
+PREFIX       := /usr
+SBINDIR      := $(PREFIX)/sbin
+DATADIR      := $(PREFIX)/share
+MANDIR8      := $(DATADIR)/man/man8
+INSTALL      := install
 
 RPMBUILD_DIR ?= $(HOME)
-LATEST_VERS ?= 1.2
+LATEST_VERS  ?= 1.3
 
-tarball:
+all:		fdrd
+
+fdrd: fdrd.c
+	$(CC) $(CPPFLAGS) $(CFLAGS) -o $@ $<
+
+clean:
+	rm -f fdrd
+
+install:	fdrd
+	mkdir -p $(DESTDIR)$(SBINDIR)
+	$(INSTALL) -m 0755 fdrd $(DESTDIR)$(SBINDIR)
+	mkdir -p $(DESTDIR)$(MANDIR8)
+	$(INSTALL) -m 0644 fdrd.man $(DESTDIR)$(MANDIR8)
+	mkdir -p $(DESTDIR)$(DATADIR)/fdr/samples
+	$(INSTALL) -m 0644 README.md $(DESTDIR)$(DATADIR)/fdr/README
+	$(INSTALL) -m 0644 samples/nfs $(DESTDIR)$(DATADIR)/fdr/samples
+	$(INSTALL) -m 0644 samples/nfs.logrotate $(DESTDIR)$(DATADIR)/fdr/samples
+
+uninstall:
+	rm -rf $(SBINDIR)/fdrd
+
+tarball: clean
+	tar --transform "s/^./fdr-$(LATEST_VERS)/" \
+		--xz -cf $(RPMBUILD_DIR)/SOURCES/fdr-$(LATEST_VERS).tar.xz .
+
+release:
 	git tag -f fdr-$(LATEST_VERS)
 	git archive --format=tar --prefix=fdr-$(LATEST_VERS)/ fdr-$(LATEST_VERS) \
 		|  ( cd /tmp ; tar xf - )
