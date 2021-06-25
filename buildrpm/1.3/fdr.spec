@@ -2,7 +2,7 @@ Summary:	A daemon which enables ftrace probes and harvests the data
 Name:		fdr
 URL:		https://github.com/oracle/fdr.git
 Version:	1.3
-Release:	1%{?dist}
+Release:	2%{?dist}
 License:	UPL
 Source0:	http://people.redhat.com/steved/fdr/%{name}-%{version}.tar.xz
 
@@ -58,5 +58,4 @@ install -m 644 fdrd.man %{buildroot}/%{_mandir}/man8/fdrd.8
 
 %changelog
 * Fri Jun 25 2021 Bill Baker <webbaker@gmail.com>  1.3-2
-* Tue Jun 22 2021 Steve Dickson <steved@redhat.com>  1.3-1
 - Initial commit
