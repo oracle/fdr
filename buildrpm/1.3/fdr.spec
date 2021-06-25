@@ -1,4 +1,4 @@
-Summary:	Flight Data Recorder
+Summary:	A daemon which enables ftrace probes and harvests the data
 Name:		fdr
 URL:		https://github.com/oracle/fdr.git
 Version:	1.3
@@ -36,7 +36,7 @@ mkdir -p %{buildroot}/%{_unitdir}
 install -m 644 %{name}.service %{buildroot}/%{_unitdir}/%{name}.service
 
 mkdir -p %{buildroot}/%{_mandir}/man8
-install -m 644 fdrd.man %{buildroot}/%{_mandir}/man8
+install -m 644 fdrd.man %{buildroot}/%{_mandir}/man8/fdrd.8
 
 %post
 %systemd_post %{name}.service
@@ -57,5 +57,6 @@ install -m 644 fdrd.man %{buildroot}/%{_mandir}/man8
 %license LICENSE
 
 %changelog
+* Fri Jun 25 2021 Bill Baker <webbaker@gmail.com>  1.3-2
 * Tue Jun 22 2021 Steve Dickson <steved@redhat.com>  1.3-1
 - Initial commit
