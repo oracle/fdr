@@ -116,14 +116,16 @@ make inself (provided by make rpm).
 The source code itself depends on standard header files such
 as ```<stdio.h>``` (provided by glibc-headers).
 
+## Contributing
+
+This project welcomes contributions from the community. Before submitting a pull request, please [review our contribution guide](./CONTRIBUTING.md)
+
+## Security
+
+Please consult the [security guide](./SECURITY.md) for our responsible security vulnerability disclosure process
+
 ## License
 
 This repository is licensed under the "Universal Permissive
 License" (UPL).  See [LICENSE](/LICENSE) in this repository for
 more information.
-
-## Contributing
-
-Contributions to this respository will require an Oracle Contributor
-Agreement, see [CONTRIBUTING](/CONTRIBUTING.md) for more information.
-
